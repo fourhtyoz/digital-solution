@@ -1,0 +1,20 @@
+{
+  "name": "digital-solutions",
+  "version": "1.0.0",
+  "description": "test task for digital solutions. list manager",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "./src/index.js",
+  "scripts": {
+    "dev": "nodemon ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.11",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
