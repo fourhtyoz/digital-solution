@@ -31,14 +31,15 @@ app.use(cors());
 app.use(json());
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const storage = setupStorage();
 const queue = setupQueue(storage);
 
-app.get("/", (req, res) => {
-    res.redirect("/swagger");
-});
+// app.get("/", (req, res) => {
+    //     res.redirect("/swagger");
+    // });
+
+    app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * @swagger
@@ -365,82 +366,7 @@ app.post("/api/items", async (req, res) => {
     }
 });
 
-/**
- * @swagger
- * /api/state:
- *   get:
- *     summary: Get current application state
- *     description: Retrieve the current state of the application including selected items and configuration
- *     tags:
- *       - State Management
- *     responses:
- *       200:
- *         description: Application state retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 selectedItems:
- *                   type: array
- *                   items:
- *                     type: object
- *                 configuration:
- *                   type: object
- *       500:
- *         description: Internal server error
- */
-app.get("/api/state", async (req, res) => {
-    try {
-        const state = await queue.getState();
-        res.json(state);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
-/**
- * @swagger
- * /api/state:
- *   post:
- *     summary: Restore application state
- *     description: Restore the application to a previous state (used for backup/restore)
- *     tags:
- *       - State Management
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             description: Complete application state object
- *             example:
- *               selectedItems: ["item_1", "item_2"]
- *               configuration: { theme: "dark", language: "en" }
- *     responses:
- *       200:
- *         description: State restored successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *       400:
- *         description: Invalid state object
- *       500:
- *         description: Internal server error
- */
-app.post("/api/state", async (req, res) => {
-    try {
-        storage.restoreState(req.body);
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
 /**
  * @swagger
@@ -449,8 +375,6 @@ app.post("/api/state", async (req, res) => {
  *     description: General item management operations
  *   - name: Selected Items
  *     description: Operations for managing selected items
- *   - name: State Management
- *     description: Application state backup and restore operations
  */
 
 /**
