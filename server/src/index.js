@@ -29,7 +29,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 app.use(cors());
 app.use(json());
-app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use(express.static(path.join(__dirname, "../../client/dist")));
 
 
 const storage = setupStorage();
