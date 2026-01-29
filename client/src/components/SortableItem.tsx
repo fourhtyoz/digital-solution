@@ -31,7 +31,6 @@ export default function SortableItem({ item, onRemove }: Props) {
                 isDragging ? "opacity-60" : ""
             }`}
         >
-            {/* Drag handle */}
             <div
                 {...listeners}
                 className="flex-1 cursor-grab text-sm text-gray-800"
@@ -39,7 +38,6 @@ export default function SortableItem({ item, onRemove }: Props) {
                 {item.id}
             </div>
 
-            {/* Remove button */}
             <button
                 onClick={() => onRemove(item.id)}
                 className="ml-3 text-red-500 hover:text-red-700 text-sm cursor-pointer"

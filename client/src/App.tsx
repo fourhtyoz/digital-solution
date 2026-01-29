@@ -41,7 +41,6 @@ export default function App() {
             { id: id.toString(), text: newItemText },
         ]);
 
-        // Call backend
         try {
             const res = await fetch(`${API}/items`, {
                 method: "POST",
