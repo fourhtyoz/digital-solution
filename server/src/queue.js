@@ -8,9 +8,9 @@ class RequestQueue {
     this.lastGetTime = 0;
     this.lastUpdateTime = 0;
     
-    this.ADD_BATCH_INTERVAL = 10000; // 10 секунд
-    this.GET_INTERVAL = 1000; // 1 секунда
-    this.UPDATE_INTERVAL = 1000; // 1 секунда
+    this.ADD_BATCH_INTERVAL = 10_000; // 10 секунд
+    this.GET_INTERVAL = 1_000; // 1 секунда
+    this.UPDATE_INTERVAL = 1_000; // 1 секунда
   }
 
   async addAddRequest(id, text) {
@@ -49,7 +49,6 @@ class RequestQueue {
     this.addBatch = [];
     this.batchTimer = null;
     console.log('Обработка батча завершена: ', results)
-    // return results;
   }
 
   async getItems(offset, limit, filter, isSelected = false) {

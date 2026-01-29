@@ -17,9 +17,7 @@ const swaggerOptions = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Express API with Swagger",
-            version: "1.0.0",
-            description: "A simple Express API documented with Swagger",
+            title: "Digital Solutions Swagger UI",
         },
     },
     apis: ["./src/index.js"],
@@ -31,15 +29,10 @@ app.use(cors());
 app.use(json());
 app.use(express.static(path.join(__dirname, "../../client/dist")));
 
-
 const storage = setupStorage();
 const queue = setupQueue(storage);
 
-// app.get("/", (req, res) => {
-    //     res.redirect("/swagger");
-    // });
-
-    app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * @swagger
@@ -104,6 +97,60 @@ app.get("/api/items", async (req, res) => {
             parseInt(limit),
             filter,
         );
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/items:
+ *   post:
+ *     summary: Add new item request
+ *     description: Submit a request to add a new item to the system
+ *     tags:
+ *       - Items
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - text
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: Unique identifier for the new item
+ *                 example: "new_item_123"
+ *               text:
+ *                 type: string
+ *                 description: Text content of the item
+ *                 example: "Sample item description"
+ *     responses:
+ *       200:
+ *         description: Item add request submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 requestId:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Internal server error
+ */
+app.post("/api/items", async (req, res) => {
+    try {
+        const { id, text } = req.body;
+        const result = await queue.addAddRequest(id, text);
+        if (!result.success) return res.status(400).json(result);
         res.json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -312,71 +359,7 @@ app.put("/api/selected/order", async (req, res) => {
     }
 });
 
-/**
- * @swagger
- * /api/items:
- *   post:
- *     summary: Add new item request
- *     description: Submit a request to add a new item to the system
- *     tags:
- *       - Items
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - id
- *               - text
- *             properties:
- *               id:
- *                 type: string
- *                 description: Unique identifier for the new item
- *                 example: "new_item_123"
- *               text:
- *                 type: string
- *                 description: Text content of the item
- *                 example: "Sample item description"
- *     responses:
- *       200:
- *         description: Item add request submitted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 requestId:
- *                   type: string
- *                 status:
- *                   type: string
- *       400:
- *         description: Missing required fields
- *       500:
- *         description: Internal server error
- */
-app.post("/api/items", async (req, res) => {
-    try {
-        const { id, text } = req.body;
-        const result = await queue.addAddRequest(id, text);
-        if (!result.success) return res.status(400).json(result);
-        res.json(result);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-
-
-/**
- * @swagger
- * tags:
- *   - name: Items
- *     description: General item management operations
- *   - name: Selected Items
- *     description: Operations for managing selected items
- */
-
+// NOTE: для деплоя на рендере и сервировки реакта с того же хоста, что и бек
 /**
  * @swagger
  * components:
@@ -395,11 +378,16 @@ app.post("/api/items", async (req, res) => {
  *         message:
  *           type: string
  */
-
 app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+    res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
+/**
+ * @swagger
+ * tags:
+ *   - name: Items
+ *   - name: Selected Items
+ */
 
 app.listen(PORT, (e) => {
     if (e) console.error(`Ошибка: ${e.message}`);

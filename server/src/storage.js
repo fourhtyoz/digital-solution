@@ -102,26 +102,6 @@ class Storage {
     this.allItems.set(id, item);
     return true;
   }
-
-  getState() {
-    return {
-      selectedOrder: [...this.selectedOrder],
-      selectedItems: Array.from(this.selectedItems.keys())
-    };
-  }
-
-  restoreState(state) {
-    if (state && state.selectedOrder) {
-      this.selectedOrder = state.selectedOrder;
-      this.selectedItems.clear();
-      state.selectedOrder.forEach(id => {
-        const item = this.allItems.get(id);
-        if (item) {
-          this.selectedItems.set(id, item);
-        }
-      });
-    }
-  }
 }
 
 let storageInstance = null;
